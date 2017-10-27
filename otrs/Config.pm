@@ -30,7 +30,7 @@ sub Load {
     # ---------------------------------------------------- #
 
     # The database host
-    $Self->{'DatabaseHost'} = 'mariadb';
+    $Self->{'DatabaseHost'} = '172.22.165.2';
 
     # The database name
     $Self->{'Database'} = "otrs";
@@ -40,7 +40,7 @@ sub Load {
 
     # The password of database user. You also can use bin/otrs.CryptPassword.pl
     # for crypted passwords
-    $Self->{'DatabasePw'} = 'changeme';
+    $Self->{'DatabasePw'} = 'q1w23R$';
 
     # The database DSN for MySQL ==> more: "perldoc DBD::mysql"
     $Self->{'DatabaseDSN'} = "DBI:mysql:database=$Self->{Database};host=$Self->{DatabaseHost}";
@@ -97,6 +97,38 @@ sub Load {
     $Self->{'SendmailModule::Host'} = 'postfix';
     $Self->{'SendmailModule::Port'} = '25';
     $Self->{'SecureMode'} = 1;
+
+#Configuração LDAP - Adicionado por Marcos Soares em 14-05-15
+
+
+    # This is an example configuration for an LDAP auth. backend.
+    # (take care that Net::LDAP is installed!)
+    $Self->{AuthModule} = 'Kernel::System::Auth::LDAP';
+    $Self->{'AuthModule::LDAP::Host'} = '172.22.254.2';
+    $Self->{'AuthModule::LDAP::BaseDN'} = 'DC=democenter,DC=f9c';
+    $Self->{'AuthModule::LDAP::UID'} = 'sAMAccountName';
+
+
+    # The following is valid but would only be necessary if the
+    # anonymous user do NOT have permission to read from the LDAP tree
+    $Self->{'AuthModule::LDAP::SearchUserDN'} = 'CN=otrs ldap,CN=Users,DC=democenter,DC=f9c';
+    $Self->{'AuthModule::LDAP::SearchUserPw'} = 'q1w2e3R$';
+
+    # In case you need to use OTRS in iso-charset, you can define this
+    # by using this option (converts utf-8 data from LDAP to iso).
+    # $Self->{'AuthModule::LDAP::Charset'} = 'iso-8859-1';
+
+    # Net::LDAP new params (if needed - for more info see perldoc Net::LDAP)
+    $Self->{'AuthModule::LDAP::Params'} = {
+        port    => 389,
+        timeout => 120,
+        async   => 0,
+        version => 3,
+    };
+
+    # Die if backend can't work, e. g. can't connect to server.
+    #$Self->{'AuthModule::LDAP::Die'} = 1;
+
 
 }
 
